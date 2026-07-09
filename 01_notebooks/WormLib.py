@@ -1,11 +1,29 @@
-#!/usr/bin/env python
-# coding: utf-8
+# ---
+# jupyter:
+#   jupytext:
+#     formats: ipynb,py:percent
+#     text_representation:
+#       extension: .py
+#       format_name: percent
+#       format_version: '1.3'
+#       jupytext_version: 1.19.4
+#   kernelspec:
+#     display_name: WormLib
+#     language: python
+#     name: python3
+# ---
 
+# %% [markdown]
 # # WormLib: open source image analysis library for *C. elegans* 
 
-# In[46]:
+# %%
+import sys, os
+print("Python executable:", sys.executable)
+print("Prefix:", sys.prefix)
+print("Conda env:", os.environ.get("CONDA_DEFAULT_ENV"))
+print("VIRTUAL_ENV:", os.environ.get("VIRTUAL_ENV"))
 
-
+# %% jupyter={"source_hidden": true}
 # #Import packages
 import bigfish
 import bigfish.stack as stack
@@ -75,148 +93,168 @@ warnings.filterwarnings(
 print("\nWelcome to WormLib v. 1.0.0")
 
 
+
+# %% [markdown]
 # ## 1. Specify input
 
+# %% [markdown]
 # #### 1.1 Input (use if running as array with bash script; comment otherwise)
 
-# In[47]:
-
-
+# %% jupyter={"source_hidden": true}
 # #Specify parameters here if running with sbatch script
 import os
 
-# 1. Define image path, microscope parameters and channel names (set to None if the channel does not exist)
-folder_name = os.getenv('FOLDER_NAME')
-output_directory = os.getenv('OUTPUT_DIRECTORY')
-
-# PSF parameters
-psf_calculator = os.getenv('PSF_CALCULATOR', 'False') == 'False'
-spot_radius_ch0 = tuple(map(int, os.getenv('SPOT_RADIUS_CH0', '1409,340,340').split(',')))
-spot_radius_ch1 = tuple(map(int, os.getenv('SPOT_RADIUS_CH1', '1283,310,310').split(',')))
-voxel_size = tuple(map(int, os.getenv('VOXEL_SIZE', '1448,450,450').split(',')))
-
-# Channels
-ch0 = os.getenv('ch0')
-ch1 = os.getenv('ch1')
-ch2 = os.getenv('ch2')
-ch3 = os.getenv('ch3')
-brightfield = os.getenv('brightfield')
-
-# 2. Select image type
-dv_images = os.getenv('DV_IMAGES', 'True') == 'True'
-nd2_images = os.getenv('ND2_IMAGES', 'False') == 'True'
-tiff_images = os.getenv('TIFF_IMAGES', 'False') == 'True'
-
-# 3. Segmentation
-run_embryo_segmentation = os.getenv('RUN_EMBRYO_SEGMENTATION', 'True') == 'True'
-embryo_diameter = int(os.getenv('EMBRYO_DIAMETER', '500'))
-nuclei_diameter = int(os.getenv('NUCLEI_DIAMETER', '70'))
-run_cell_segmentation = os.getenv('RUN_CELL_SEGMENTATION', 'True') == 'True'
-cell_diameter = int(os.getenv('CELL_DIAMETER', '250'))
-run_cell_classifier = os.getenv('RUN_CELL_CLASSIFIER', 'True') == 'True'
-
-# 4. Spot detection
-run_spot_detection = os.getenv('RUN_SPOT_DETECTION', 'True') == 'True'
-
-# 5. Spatial mRNA analysis
-run_mRNA_heatmaps = os.getenv('RUN_mRNA_HEATMAPS', 'True') == 'True'
-run_rna_density_analysis = os.getenv('RUN_RNA_DENSITY_ANALYSIS', 'True') == 'True'
-run_line_scan_analysis = os.getenv('RUN_LINE_SCAN_ANALYSIS', 'True') == 'True'
-
-
-# 6. Colocalization analysis module 'tester code'
-calculate_gfp_mask_colocalization = os.getenv('CALCULATE_GFP_MASK_COLOCALIZATION', 'True') == 'True'
-
-
-generate_donut_mask = os.getenv('GENERATE_DONUT_MASK', 'True') == 'True'
-calculate_membrane_colocalization = os.getenv('CALCULATE_MEMBRANE_COLOCALIZATION', 'True') == 'True'
-run_concentric_layers_analysis = os.getenv('RUN_CONCENTRIC_LAYERS_ANALYSIS', 'True') == 'True'
-
-generate_pgranule_mask = os.getenv('GENERATE_PGRANULE_MASK', 'False') == 'True'
-calculate_pgranule_colocalization = os.getenv('CALCULATE_PGRANULE_COLOCALIZATION', 'False') == 'True'
-
-calculate_mRNA_mRNA_colocalization = os.getenv('CALCULATE_mRNA_mRNA_COLOCALIZATION', 'False') == 'True'
-run_protein_heatmaps = os.getenv('RUN_PROTEIN_HEATMAPS', 'False') == 'True'
-
-
-# Ensure required parameters are set
-if folder_name is None or output_directory is None:
-    raise ValueError("Both 'FOLDER_NAME' and 'OUTPUT_DIRECTORY' must be provided.")
-
-
-# #### 1.2 Input (use if running as jupyter notebook; comment otherwise)
-
-# In[48]:
-
-
-# # #Specify parameters here if running as jupyter notebook
-
 # # 1. Define image path, microscope parameters and channel names (set to None if the channel does not exist)
-# folder_name = '/pl/active/onishimura_lab/PROJECTS/naly/bigfish/01_erm-1_paper/02_RNAi_quantification/LP306_membrane/BMK-1_RNAi/230408_LP306_BMK-1_rep1/input/04' #image subdirectory path
+# folder_name = os.getenv('FOLDER_NAME')
+# output_directory = os.getenv('OUTPUT_DIRECTORY')
 
-# voxel_size = (1448, 450, 450)   # Microscope pixel size in nm (Z,Y,X)
-# spot_radius_ch0 = (1409, 340, 340)  # PSF Z,Y,X #Settings used for Cy5 channel
-# spot_radius_ch1 = (1283, 310, 310)  # PSF Z,Y,X #Settings used for mCherry channel
+# # PSF parameters
+# psf_calculator = os.getenv('PSF_CALCULATOR', 'False') == 'False'
+# spot_radius_ch0 = tuple(map(int, os.getenv('SPOT_RADIUS_CH0', '1409,340,340').split(',')))
+# spot_radius_ch1 = tuple(map(int, os.getenv('SPOT_RADIUS_CH1', '1283,310,310').split(',')))
+# voxel_size = tuple(map(int, os.getenv('VOXEL_SIZE', '1448,450,450').split(',')))
 
-# ch0 = "set 3_mRNA"  # (Q670)
-# ch1 = "erm 1_mRNA"  # (Q610)
-# ch2 =  "TBB-2-GFP-marker"  # (GFP)
-# ch3 = "DAPI"
-# brightfield = "brightfield"
+# # Channels
+# ch0 = os.getenv('ch0')
+# ch1 = os.getenv('ch1')
+# ch2 = os.getenv('ch2')
+# ch3 = os.getenv('ch3')
+# brightfield = os.getenv('brightfield')
 
 # # 2. Select image type
-# dv_images = True
-# nd2_images = False
-# tiff_images = False
-# # mask_path = "/pl/active/onishimura_lab/PROJECTS/naly/bigfish/tiff-test/3D-microtubules-mask-C3-220308_wNT002_tbb-2-GFP-488_erm-1-610_aGFP-670_07_R3D_Simple Segmentation.tif"
+# dv_images = os.getenv('DV_IMAGES', 'True') == 'True'
+# nd2_images = os.getenv('ND2_IMAGES', 'False') == 'True'
+# tiff_images = os.getenv('TIFF_IMAGES', 'False') == 'True'
 
 # # 3. Segmentation
-# run_embryo_segmentation = True
-# embryo_diameter = 375
-# nuclei_diameter = 70
-# run_cell_segmentation = False
-# cell_diameter = 250
-# run_cell_classifier = False
+# run_embryo_segmentation = os.getenv('RUN_EMBRYO_SEGMENTATION', 'True') == 'True'
+# embryo_diameter = int(os.getenv('EMBRYO_DIAMETER', '500'))
+# nuclei_diameter = int(os.getenv('NUCLEI_DIAMETER', '70'))
+# run_cell_segmentation = os.getenv('RUN_CELL_SEGMENTATION', 'True') == 'True'
+# cell_diameter = int(os.getenv('CELL_DIAMETER', '250'))
+# run_cell_classifier = os.getenv('RUN_CELL_CLASSIFIER', 'True') == 'True'
 
 # # 4. Spot detection
-# run_spot_detection = True
+# run_spot_detection = os.getenv('RUN_SPOT_DETECTION', 'True') == 'True'
 
-# # 5. Spatial analysis of mRNA
-# run_mRNA_heatmaps = True
-# run_rna_density_analysis = False
-# run_line_scan_analysis = False
+# # 5. Spatial mRNA analysis
+# run_mRNA_heatmaps = os.getenv('RUN_mRNA_HEATMAPS', 'True') == 'True'
+# run_rna_density_analysis = os.getenv('RUN_RNA_DENSITY_ANALYSIS', 'True') == 'True'
+# run_line_scan_analysis = os.getenv('RUN_LINE_SCAN_ANALYSIS', 'True') == 'True'
+
 
 # # 6. Colocalization analysis module 'tester code'
-# calculate_gfp_mask_colocalization = True
-# calculate_nuclei_colocalization = False
-
-# generate_donut_mask = False
-# calculate_membrane_colocalization = False
-# run_concentric_layers_analysis = False
-
-# generate_pgranule_mask = False
-# calculate_pgranule_colocalization = False
-
-# calculate_mRNA_mRNA_colocalization = False
-# run_protein_heatmaps = False
+# calculate_gfp_mask_colocalization = os.getenv('CALCULATE_GFP_MASK_COLOCALIZATION', 'True') == 'True'
 
 
-# #Specify where the data will be stored
-# output_directory = os.path.join(os.path.dirname(os.path.dirname(folder_name)), "output", os.path.basename(folder_name))
-# os.makedirs(output_directory, exist_ok=True)
+# generate_donut_mask = os.getenv('GENERATE_DONUT_MASK', 'True') == 'True'
+# calculate_membrane_colocalization = os.getenv('CALCULATE_MEMBRANE_COLOCALIZATION', 'True') == 'True'
+# run_concentric_layers_analysis = os.getenv('RUN_CONCENTRIC_LAYERS_ANALYSIS', 'True') == 'True'
 
-# # # Display logo
-# logo_path = "/projects/naly@colostate.edu/wormlib/01_notebooks/WormLib_logo.png"
-# display(Image(filename=logo_path))
+# generate_pgranule_mask = os.getenv('GENERATE_PGRANULE_MASK', 'False') == 'True'
+# calculate_pgranule_colocalization = os.getenv('CALCULATE_PGRANULE_COLOCALIZATION', 'False') == 'True'
+
+# calculate_mRNA_mRNA_colocalization = os.getenv('CALCULATE_mRNA_mRNA_COLOCALIZATION', 'False') == 'True'
+# run_protein_heatmaps = os.getenv('RUN_PROTEIN_HEATMAPS', 'False') == 'True'
 
 
+# # Ensure required parameters are set
+# if folder_name is None or output_directory is None:
+#     raise ValueError("Both 'FOLDER_NAME' and 'OUTPUT_DIRECTORY' must be provided.")
+
+
+# %% [markdown]
+# #### 1.2 Input (use if running as jupyter notebook; comment otherwise)
+
+# %%
+# #Specify parameters here if running as jupyter notebook
+
+# 1. Define image path, microscope parameters and channel names (set to None if the channel does not exist)
+folder_name = '//Users/nalytorres/Library/CloudStorage/OneDrive-Colostate/01_wormlib/02_data/temp-input/230713_L4440_RNAi_rep1/230713_Lp306_L4440_01' #image subdirectory path
+
+voxel_size = (1448, 450, 450)   # Microscope pixel size in nm (Z,Y,X)
+spot_radius_ch0 = (1409, 340, 340)  # PSF Z,Y,X #Settings used for Cy5 channel
+spot_radius_ch1 = (1283, 310, 310)  # PSF Z,Y,X #Settings used for mCherry channel
+
+ch0 = "set 3_mRNA"  # (Q670)
+ch1 = "erm 1_mRNA"  # (Q610)
+ch2 =  "ERM 1_protein"  # (GFP)
+ch3 = "DAPI"
+brightfield = "brightfield"
+
+# 2. Select image type
+dv_images = True
+nd2_images = False
+tiff_images = False
+# mask_path = "/pl/active/onishimura_lab/PROJECTS/naly/bigfish/tiff-test/3D-microtubules-mask-C3-220308_wNT002_tbb-2-GFP-488_erm-1-610_aGFP-670_07_R3D_Simple Segmentation.tif"
+
+# 3. Segmentation
+run_embryo_segmentation = True
+embryo_diameter = 375
+nuclei_diameter = 30
+run_cell_segmentation = False
+cell_diameter = 250
+run_cell_classifier = False
+
+# 4. Spot detection
+run_spot_detection = True
+
+# 5. Spatial analysis of mRNA
+run_mRNA_heatmaps = True
+run_rna_density_analysis = True
+run_line_scan_analysis = True
+
+# 6. Colocalization analysis module 'tester code'
+calculate_gfp_mask_colocalization = False
+calculate_nuclei_colocalization = False
+
+generate_donut_mask = False
+calculate_membrane_colocalization = False
+run_concentric_layers_analysis = False
+
+generate_pgranule_mask = False
+calculate_pgranule_colocalization = False
+
+calculate_mRNA_mRNA_colocalization = False
+run_protein_heatmaps = False
+
+
+#Specify where the data will be stored
+output_directory = os.path.join(os.path.dirname(os.path.dirname(folder_name)), "output", os.path.basename(folder_name))
+os.makedirs(output_directory, exist_ok=True)
+
+# Display logo
+
+def find_logo_path():
+    search_roots = [os.getcwd()]
+    parent = os.path.dirname(os.getcwd())
+    if parent and parent not in search_roots:
+        search_roots.append(parent)
+
+    for root in search_roots:
+        for candidate in [
+            os.path.join(root, "01_notebooks", "WormLib_logo.png"),
+            os.path.join(root, "WormLib_logo.png"),
+        ]:
+            if os.path.exists(candidate):
+                return candidate
+    return None
+
+
+logo_path = find_logo_path()
+if logo_path is not None:
+    display(Image(filename=logo_path))
+else:
+    print("Logo image not found. Expected WormLib_logo.png in the repository.")
+
+
+# %% [markdown]
 # ## 2. Load image(s)
 
+# %% [markdown]
 # #### 2.1 Deltavision files
 
-# In[49]:
-
-
+# %% jupyter={"source_hidden": true}
 # #Read in Deltavision files
 
 if dv_images:
@@ -301,12 +339,10 @@ if dv_images:
     grid_width=80
     grid_height=80
 
-
+# %% [markdown]
 # #### 2.2 Nikon files
 
-# In[50]:
-
-
+# %% jupyter={"source_hidden": true}
 # Process nd2 images
 
 if nd2_images:
@@ -388,11 +424,10 @@ if nd2_images:
     grid_height=60
 
 
+# %% [markdown]
 # #### 2.3 Tiff files
 
-# In[51]:
-
-
+# %% jupyter={"source_hidden": true}
 # #Read .tif or .tiff images
 
 def read_3d_mask(mask_path, slice_to_plot=0, plot=True):
@@ -435,9 +470,7 @@ if tiff_images:
     mask_3d = mask_3d > 0   # binarize
 
 
-# In[52]:
-
-
+# %% jupyter={"source_hidden": true}
 # # Print parameters to verify
 
 print(f" \n=========================================")
@@ -489,13 +522,14 @@ if run_line_scan_analysis: print("    Line scan analysis \n")
 print()
 
 
+
+# %% [markdown]
 # ## 3. Segmentation
 
+# %% [markdown]
 # #### 3.1 Single cell segmentation (optimized for <4-cell embryos)
 
-# In[53]:
-
-
+# %% jupyter={"source_hidden": true}
 #### 1.1 Single cell segmentation (up to 4-cell embryos)
 
 print(f" \n============================")
@@ -723,11 +757,10 @@ if run_cell_segmentation:
         run_embryo_segmentation = False
 
 
+# %% [markdown]
 # #### 3.2 Cell stage sorting
 
-# In[54]:
-
-
+# %% jupyter={"source_hidden": true}
 # #Sort images based on nuclei
 def get_cell_stage_and_size_filtered(masks_nuclei, min_fraction_median=0.2):
     # Label connected components
@@ -806,13 +839,13 @@ else:
 # print(f"run_embryo_segmentation = {run_embryo_segmentation}")
 
 
+# %% [markdown]
 # #### 3.3 Classify masks with biological names
 
+# %% [markdown]
 # ##### 3.3.1 (2-cell) AB-P1-cell classifier
 
-# In[55]:
-
-
+# %% jupyter={"source_hidden": true}
 ### 2-cell classifier
 
 # Suppress just the InconsistentVersionWarning
@@ -981,12 +1014,10 @@ if run_2cell_classifier:
 else:
     print("Skipping 2-cell classifier...")
 
-
+# %% [markdown]
 # ##### 3.3.2 (4-cell) ABa, ABp, EMS, P2 classifier
 
-# In[56]:
-
-
+# %% jupyter={"source_hidden": true}
 ### 4-cell classifier
 
 # Suppress just the InconsistentVersionWarning
@@ -1178,11 +1209,10 @@ else:
     print("Skipping 4-cell classifier...")
 
 
+# %% [markdown]
 # #### 3.4 Embryo Segementation
 
-# In[57]:
-
-
+# %%
 ## Embryo segmentation
 
 def keep_largest_region(mask):
@@ -1293,13 +1323,13 @@ else:
     print("Skipping embryo segmentation...")
 
 
+# %% [markdown]
 # ## 4. Spot detection
 
+# %% [markdown]
 # #### 4.1 Automated threshold selection and spot detection
 
-# In[58]:
-
-
+# %% jupyter={"source_hidden": true}
 print(f" \n============================")
 print('3. SPOT DETECTION SETTINGS')
 print('============================')
@@ -1418,11 +1448,10 @@ if run_spot_detection:
         spots_post_clustering_ch1, clusters_ch1,list_spots_in_each_cell_ch1,list_clusters_in_each_cell_ch1 = spot_detection(rna_ch1,voxel_size,spot_radius_ch1,masks_cytosol)
 
 
+# %% [markdown]
 # #### 4.2 Save mRNA counts
 
-# In[59]:
-
-
+# %% jupyter={"source_hidden": true}
 # Initialize an empty DataFrame
 df_quantification = pd.DataFrame()
 
@@ -1492,13 +1521,13 @@ if any(x is not None for x in [sum_spots_ch0, sum_spots_ch1]):
         print(df_long.head(5).to_string(index=False))
 
 
+# %% [markdown]
 # ## 5. Spatial analysis of mRNA
 
+# %% [markdown]
 # #### 5.1 mRNA Abundance Heatmap
 
-# In[60]:
-
-
+# %% jupyter={"source_hidden": true}
 # # Generate heatmaps of mRNA abundance in each channel
 if run_mRNA_heatmaps:
     def create_heatmap(spots_x, spots_y, masks_cytosol, masks_nuclei, title_suffix,
@@ -1577,11 +1606,163 @@ if run_mRNA_heatmaps:
         )
 
 
+# %% jupyter={"source_hidden": true}
+# Generate heatmaps of mRNA abundance (spots) OR fluorescence intensity
+vmin = 600
+vmax = 2100   # or whatever makes sense
+
+if run_mRNA_heatmaps:
+
+    def create_heatmap(
+        spots_x,
+        spots_y,
+        masks_cytosol,
+        masks_nuclei,
+        title_suffix,
+        rna_max=None,
+        image_name=None,
+        grid_width=grid_width,
+        grid_height=grid_height,
+        intensity_image=None   # <-- NEW: for ch2 fluorescence
+    ):
+    
+        img_height, img_width = masks_cytosol.shape[:2]
+        cell_width = img_width / grid_width
+        cell_height = img_height / grid_height
+
+        # ============================
+        # MODE 1: SPOT-BASED HEATMAP
+        # ============================
+        if intensity_image is None:
+
+            grid = np.zeros((grid_height, grid_width), dtype=int)
+
+            for x, y in zip(spots_x, spots_y):
+                cell_x = int(x / cell_width)
+                cell_y = int(y / cell_height)
+
+                if 0 <= cell_x < grid_width and 0 <= cell_y < grid_height:
+                    grid[cell_y, cell_x] += 1
+
+        # ============================
+        # MODE 2: INTENSITY HEATMAP (ch2)
+        # ============================
+        else:
+
+            grid = np.zeros((grid_height, grid_width), dtype=float)
+
+            for gy in range(grid_height):
+                for gx in range(grid_width):
+
+                    x0 = int(gx * cell_width)
+                    x1 = int((gx + 1) * cell_width)
+                    y0 = int(gy * cell_height)
+                    y1 = int((gy + 1) * cell_height)
+
+                    region = intensity_image[y0:y1, x0:x1]
+
+                    if region.size > 0:
+                        grid[gy, gx] = np.mean(region)  # or np.sum(region)
+
+        # ============================
+        # PLOTTING
+        # ============================
+        if rna_max is not None or intensity_image is not None:
+
+            fig, axs = plt.subplots(1, 2, figsize=(8, 4))
+
+            # Left panel (image)
+            axs[0].imshow(rna_max if rna_max is not None else intensity_image, cmap='gray')
+            axs[0].set_title(f"{title_suffix} max projection")
+            axs[0].axis("off")
+
+            # Right panel (heatmap)
+            im = axs[1].imshow(grid, cmap='CMRmap', interpolation='nearest', vmin=vmin, vmax=vmax,)
+            axs[1].set_title(f"{title_suffix} heatmap")
+            axs[1].axis("off")
+
+            axs[1].set_xlim(-0.5, grid_width - 0.5)
+            axs[1].set_ylim(grid_height - 0.5, -0.5)
+
+            cbar = fig.colorbar(im, ax=axs[1], fraction=0.046, pad=0.06)
+            cbar.ax.text(1, 1.05, 'Higher\nlevels', transform=cbar.ax.transAxes, ha='center')
+            cbar.ax.text(1, -0.19, 'Lower\nlevels', transform=cbar.ax.transAxes, ha='center')
+#             cbar.set_ticks([])
+            ticks = np.linspace(vmin, vmax, 5)  # 5 evenly spaced values
+            cbar.set_ticks(ticks)
+            cbar.set_ticklabels([f"{t:.0f}" for t in ticks])  # or adjust formatting
+
+            plt.tight_layout()
+
+            combined_path = os.path.join(output_directory, f"{title_suffix}_heatmap.png")
+            plt.savefig(combined_path, dpi=300, bbox_inches='tight')
+            plt.show()
+            plt.close()
+            
+
+        return grid
+
+
+    # ============================
+    # CH0 HEATMAP (spots)
+    # ============================
+    ch0_heatmap = None
+    ch1_heatmap = None
+    ch2_heatmap = None
+
+    if 'spots_post_clustering_ch0' in locals():
+        spots_x_ch0 = spots_post_clustering_ch0[:, 2]
+        spots_y_ch0 = spots_post_clustering_ch0[:, 1]
+
+        ch0_heatmap = create_heatmap(
+            spots_x_ch0,
+            spots_y_ch0,
+            masks_cytosol,
+            masks_nuclei,
+            title_suffix=ch0,
+            rna_max=image_ch0,
+            image_name=image_name,
+            intensity_image=image_ch0
+        )
+
+    if 'spots_post_clustering_ch1' in locals():
+        spots_x_ch1 = spots_post_clustering_ch1[:, 2]
+        spots_y_ch1 = spots_post_clustering_ch1[:, 1]
+
+        ch1_heatmap = create_heatmap(
+            spots_x_ch1,
+            spots_y_ch1,
+            masks_cytosol,
+            masks_nuclei,
+            title_suffix=ch1,
+            rna_max=image_ch1,
+            image_name=image_name,
+            intensity_image=image_ch1
+        )
+
+    # ============================
+    # CH2 HEATMAP (FLUORESCENCE)
+    # ============================
+    if 'image_ch2' in locals():
+
+        ch2_heatmap = create_heatmap(
+            None,
+            None,
+            masks_cytosol,
+            masks_nuclei,
+            title_suffix="ch2_fluorescence",
+            rna_max=image_ch2,
+            image_name=image_name,
+            intensity_image=image_ch2
+        )
+        
+        
+
+
+# %% [markdown]
 # #### 5.2 RNA density plots
 
-# In[61]:
-
-
+# %% jupyter={"source_hidden": true}
 def analyze_rna_density(image, masks_cytosol, colormap, mRNA_name, image_name, output_directory):
     """
     Analyze RNA intensity along the embryo AP axis defined by an ellipse.
@@ -1802,11 +1983,11 @@ if run_rna_density_analysis:
         analyze_rna_density(image=image, masks_cytosol=masks_cytosol, colormap=colormap, mRNA_name=mRNA_name, image_name=image_name, output_directory=output_directory)
 
 
+
+# %% [markdown]
 # #### 5.3 Line scan plot
 
-# In[62]:
-
-
+# %% jupyter={"source_hidden": true}
 def line_scan(image, masks_cytosol, colormap, mRNA_name, image_name, output_directory):
     
     # If the image is 3D (z, y, x), perform max projection
@@ -2068,11 +2249,11 @@ if run_line_scan_analysis:
 
 
 
+
+# %% [markdown]
 # ## 6. Colocalization Module
 
-# In[63]:
-
-
+# %% jupyter={"source_hidden": true}
 # #Tidy up before plotting
 
 # Clean arrays to calculate special features in 3D
@@ -2110,241 +2291,235 @@ else:
 # print(ch1_array)
 
 
+# %% [markdown]
 # ### Colocalization with gfp
 
-# In[64]:
+# %% jupyter={"source_hidden": true}
+# import matplotlib.pyplot as plt
+# import numpy as np
+# from skimage.filters import threshold_otsu
+# from skimage.morphology import remove_small_objects, remove_small_holes
+# import matplotlib.pyplot as plt
 
 
-import matplotlib.pyplot as plt
-import numpy as np
-from skimage.filters import threshold_otsu
-from skimage.morphology import remove_small_objects, remove_small_holes
-import matplotlib.pyplot as plt
+# plt.figure(figsize=(6,6))
+# plt.imshow(image_ch2, cmap='plasma')  # GFP = green
+# plt.colorbar(label='Fluorescence intensity')
+# plt.title("GFP channel")
+# plt.axis('off')
+# plt.show()
 
 
-plt.figure(figsize=(6,6))
-plt.imshow(image_ch2, cmap='Greens')  # GFP = green
-plt.colorbar(label='Fluorescence intensity')
-plt.title("GFP channel")
-plt.axis('off')
-plt.show()
+# # automatic threshold
+# thresh = threshold_otsu(image_ch2)
+# print("Otsu threshold:", thresh)
+
+# # create initial mask
+# mask = image_ch2 > thresh
+
+# mask = remove_small_objects(mask, min_size=400)      # remove small noise
+# mask = remove_small_holes(mask, area_threshold=100)  # fill small gaps
+
+# plt.figure(figsize=(6,6))
+# plt.imshow(image_ch2, cmap='Greens')
+# plt.imshow(mask, cmap='Reds', alpha=0.4)  # red overlay for mask
+# plt.title("GFP mask overlay")
+# plt.axis('off')
+# plt.show()
+
+
+# %% jupyter={"source_hidden": true}
+
+
+# # Normalize
+# img_norm = (image_ch2 - image_ch2.min()) / (image_ch2.max() - image_ch2.min())
+
+# # Canny with explicit thresholds (more sensitive)
+# edges_canny = canny(
+#     img_norm,
+#     sigma=0.05,
+#     low_threshold=0.08,
+#     high_threshold=0.20
+# )
+
+# gfp_mask = dilation(edges_canny, disk(5))
+# np.save("gfp_mask.npy", gfp_mask)
+
+
+# plt.figure(figsize=(6,6))
+# plt.imshow(gfp_mask, cmap='gray')
+# plt.title("Membrane edges (Canny, sensitive)")
+# plt.axis('off')
+# plt.show()
+
+# # Convert boolean mask to image (0–255)
+# # gfp_mask_img = (gfp_mask.astype(np.uint8)) * 255
+
+# # Define output paths
+# png_path = os.path.join(output_directory, f"{image_name}_gfp_mask.png")
+# tif_path = os.path.join(output_directory, f"{image_name}_gfp_mask.tif")
 
 
 
-# automatic threshold
-thresh = threshold_otsu(image_ch2)
-print("Otsu threshold:", thresh)
-
-# create initial mask
-mask = image_ch2 > thresh
-
-mask = remove_small_objects(mask, min_size=400)      # remove small noise
-mask = remove_small_holes(mask, area_threshold=100)  # fill small gaps
-
-plt.figure(figsize=(6,6))
-plt.imshow(image_ch2, cmap='Greens')
-plt.imshow(mask, cmap='Reds', alpha=0.4)  # red overlay for mask
-plt.title("GFP mask overlay")
-plt.axis('off')
-plt.show()
-
-
-# In[65]:
-
-
-
-
-# Normalize
-img_norm = (image_ch2 - image_ch2.min()) / (image_ch2.max() - image_ch2.min())
-
-# Canny with explicit thresholds (more sensitive)
-edges_canny = canny(
-    img_norm,
-    sigma=0.8,
-    low_threshold=0.08,
-    high_threshold=0.15
-)
-
-gfp_mask = dilation(edges_canny, disk(5))
-np.save("gfp_mask.npy", gfp_mask)
-
-
-plt.figure(figsize=(6,6))
-plt.imshow(gfp_mask, cmap='gray')
-plt.title("Membrane edges (Canny, sensitive)")
-plt.axis('off')
-plt.show()
-
-# Convert boolean mask to image (0–255)
-# gfp_mask_img = (gfp_mask.astype(np.uint8)) * 255
-
-# Define output paths
-png_path = os.path.join(output_directory, f"{image_name}_gfp_mask.png")
-tif_path = os.path.join(output_directory, f"{image_name}_gfp_mask.tif")
-
-
-# In[66]:
-
-
+# %% jupyter={"source_hidden": true}
 # #Calculate colocalization with gfp
 
-if calculate_gfp_mask_colocalization:
-    def calculate_mask_colocalization(coord, rna_max, gfp_mask, output_directory, rna_channel, image_name, plot=True):
-        """
-        Calculate and optionally plot the colocalization of RNA spots with mask.
+# if calculate_gfp_mask_colocalization:
+#     def calculate_mask_colocalization(coord, rna_max, gfp_mask, output_directory, rna_channel, image_name, plot=True):
+#         """
+#         Calculate and optionally plot the colocalization of RNA spots with mask.
 
-        Parameters:
-            coord: np.ndarray
-                The coordinates of RNA spots.
-            rna_max: np.ndarray
-                Maximum projection of the RNA channel for plotting.
-            gfp_mask: np.ndarray
-                Mask of the gfp region.
-            output_directory: str
-                Directory to save the output plots.
-            rna_channel: str
-                Name of the RNA channel (e.g., "mCherry").
-            image_name: str
-                Name of the image being processed.
-            plot: bool
-                Whether to create and save plots.
+#         Parameters:
+#             coord: np.ndarray
+#                 The coordinates of RNA spots.
+#             rna_max: np.ndarray
+#                 Maximum projection of the RNA channel for plotting.
+#             gfp_mask: np.ndarray
+#                 Mask of the gfp region.
+#             output_directory: str
+#                 Directory to save the output plots.
+#             rna_channel: str
+#                 Name of the RNA channel (e.g., "mCherry").
+#             image_name: str
+#                 Name of the image being processed.
+#             plot: bool
+#                 Whether to create and save plots.
 
-        Returns:
-            tuple: (spots_in_mask, spots_out_mask)
-        """
-        ndim = 3  # 3D data
+#         Returns:
+#             tuple: (spots_in_mask, spots_out_mask)
+#         """
+#         ndim = 3  # 3D data
 
-        # Identify objects in mask
-        spots_in_mask, spots_out_mask = bigfish.multistack.identify_objects_in_region(gfp_mask, coord, ndim)
+#         # Identify objects in mask
+#         spots_in_mask, spots_out_mask = bigfish.multistack.identify_objects_in_region(gfp_mask, coord, ndim)
 
-        # Log the results
-        print(f'{rna_channel} spots detected (in mask):')
-        print(f"  Shape: {spots_in_mask.shape}")
-        print(f"  Dtype: {spots_in_mask.dtype}\n")
-        print(f'{rna_channel} spots detected (in cytoplasm):')
-        print(f"  Shape: {spots_out_mask.shape}")
-        print(f"  Dtype: {spots_out_mask.dtype}")
+#         # Log the results
+#         print(f'{rna_channel} spots detected (in mask):')
+#         print(f"  Shape: {spots_in_mask.shape}")
+#         print(f"  Dtype: {spots_in_mask.dtype}\n")
+#         print(f'{rna_channel} spots detected (in cytoplasm):')
+#         print(f"  Shape: {spots_out_mask.shape}")
+#         print(f"  Dtype: {spots_out_mask.dtype}")
 
-        if plot:
-            # Plot spots in cytoplasm
-            out_mask_output = os.path.join(output_directory, rna_channel + '_in_cyto_' + image_name + '.png')
-            plot.plot_detection(
-                rna_max,
-                spots=spots_out_mask,
-                radius=1,
-                color="blue",
-                path_output=out_mask_output,
-                title=f'Blue = {rna_channel} in cytoplasm',
-                linewidth=3,
-                contrast=True,
-                framesize=(10, 5)
-            )
+#         if plot:
+#             # Plot spots in cytoplasm
+#             out_mask_output = os.path.join(output_directory, rna_channel + '_in_cyto_' + image_name + '.png')
+#             plot.plot_detection(
+#                 rna_max,
+#                 spots=spots_out_mask,
+#                 radius=1,
+#                 color="blue",
+#                 path_output=out_mask_output,
+#                 title=f'Blue = {rna_channel} in cytoplasm',
+#                 linewidth=3,
+#                 contrast=True,
+#                 framesize=(10, 5)
+#             )
 
-            # Plot spots in mask
-            in_mask_output = os.path.join(output_directory, rna_channel + '_in_mask_' + image_name + '.png')
-            plot.plot_detection(
-                gfp_mask.astype(np.uint8) * 255,
-                spots=spots_in_mask,
-                radius=1,
-                color="red",
-                path_output=in_mask_output,
-                title=f'Red = {rna_channel} in mask',
-                linewidth=3,
-                contrast=True,
-                framesize=(10, 5)
-            )
+#             # Plot spots in mask
+#             in_mask_output = os.path.join(output_directory, rna_channel + '_in_mask_' + image_name + '.png')
+#             plot.plot_detection(
+#                 gfp_mask.astype(np.uint8) * 255,
+#                 spots=spots_in_mask,
+#                 radius=1,
+#                 color="red",
+#                 path_output=in_mask_output,
+#                 title=f'Red = {rna_channel} in mask',
+#                 linewidth=3,
+#                 contrast=True,
+#                 framesize=(10, 5)
+#             )
 
-            # Combined plot
-            combined_output = os.path.join(output_directory, rna_channel + '_combined_mask_' + image_name + '.png')
-            plot.plot_detection(
-                rna_max,
-                spots=[spots_in_mask, spots_out_mask],
-                radius=2,
-                color=["red", "blue"],
-                path_output=combined_output,
-                title=f'Red = {rna_channel} in gfp mask | Blue = {rna_channel} in cytoplasm',
-                linewidth=3,
-                contrast=True,
-                framesize=(10, 5)
-            )
+#             # Combined plot
+#             combined_output = os.path.join(output_directory, rna_channel + '_combined_mask_' + image_name + '.png')
+#             plot.plot_detection(
+#                 rna_max,
+#                 spots=[spots_in_mask, spots_out_mask],
+#                 radius=2,
+#                 color=["red", "blue"],
+#                 path_output=combined_output,
+#                 title=f'Red = {rna_channel} in gfp mask | Blue = {rna_channel} in cytoplasm',
+#                 linewidth=3,
+#                 contrast=True,
+#                 framesize=(10, 5)
+#             )
 
-        # Quantification: number of spots in mask and cytoplasm
-        num_spots_in_mask = spots_in_mask.shape[0]
-        # num_spots_in_cyto = spots_out_mask.shape[0]
+#         # Quantification: number of spots in mask and cytoplasm
+#         num_spots_in_mask = spots_in_mask.shape[0]
+#         # num_spots_in_cyto = spots_out_mask.shape[0]
 
-        # Add new columns with default values (e.g., NaN)
-        df_quantification[f'{rna_channel} in gfp mask'] = np.nan
-        # df_quantification[f'{rna_channel} out mask'] = np.nan
+#         # Add new columns with default values (e.g., NaN)
+#         df_quantification[f'{rna_channel} in gfp mask'] = np.nan
+#         # df_quantification[f'{rna_channel} out mask'] = np.nan
 
-        # Update the new columns with the counts for the specific image ID
-        df_quantification.loc[df_quantification['Image ID'] == image_name, f'{rna_channel} in gfp mask'] = num_spots_in_mask
-        # df_quantification.loc[df_quantification['Image ID'] == image_name, f'{rna_channel} out mask'] = num_spots_in_cyto
+#         # Update the new columns with the counts for the specific image ID
+#         df_quantification.loc[df_quantification['Image ID'] == image_name, f'{rna_channel} in gfp mask'] = num_spots_in_mask
+#         # df_quantification.loc[df_quantification['Image ID'] == image_name, f'{rna_channel} out mask'] = num_spots_in_cyto
 
-        # Display the updated DataFrame
-        df_quantification
+#         # Display the updated DataFrame
+#         df_quantification
 
-        return spots_in_mask, spots_out_mask
+#         return spots_in_mask, spots_out_mask
     
-    # Call the function for both RNA channels
-    rna_names = [ch0, ch1]  # Your actual mRNA names as strings
-    rna_images = [image_ch0, image_ch1]  # Your actual images
-    rna_coords = [ch0_array, ch1_array]  # Coordinates for each RNA channel
+#     # Call the function for both RNA channels
+#     rna_names = [ch0, ch1]  # Your actual mRNA names as strings
+#     rna_images = [image_ch0, image_ch1]  # Your actual images
+#     rna_coords = [ch0_array, ch1_array]  # Coordinates for each RNA channel
     
 
-    # Call the function for each RNA channel
-    for rna_name, rna_image, coord in zip(rna_names, rna_images, rna_coords):
-        spots_in_mask, spots_out_mask = calculate_mask_colocalization(
-            coord=coord,
-            rna_max=rna_image,
-            gfp_mask=gfp_mask,
-            output_directory=output_directory,
-            rna_channel=rna_name,
-            image_name=image_name,
-            plot=plot
-        )
+#     # Call the function for each RNA channel
+#     for rna_name, rna_image, coord in zip(rna_names, rna_images, rna_coords):
+#         spots_in_mask, spots_out_mask = calculate_mask_colocalization(
+#             coord=coord,
+#             rna_max=rna_image,
+#             gfp_mask=gfp_mask,
+#             output_directory=output_directory,
+#             rna_channel=rna_name,
+#             image_name=image_name,
+#             plot=plot
+#         )
 
 
-# Calculate mask area (number of pixels in the mask)
-mask_area = np.sum(gfp_mask)
+# # Calculate mask area (number of pixels in the mask)
+# mask_area = np.sum(gfp_mask)
 
-print(f"GFP mask area (pixels): {mask_area}")
-area_path = os.path.join(output_directory, f"{image_name}_gfp_mask_area.txt")
+# print(f"GFP mask area (pixels): {mask_area}")
+# area_path = os.path.join(output_directory, f"{image_name}_gfp_mask_area.txt")
 
 
-image_area = gfp_mask.size
-mask_fraction = mask_area / image_area
+# image_area = gfp_mask.size
+# mask_fraction = mask_area / image_area
 
-print(f"Mask fraction: {mask_fraction:.4f}")
+# print(f"Mask fraction: {mask_fraction:.4f}")
 
-with open(area_path, "w") as f:
-    f.write(f"Mask area (pixels): {mask_area}\n")
-    f.write(f"Image area (pixels): {image_area}\n")
-    f.write(f"Mask fraction: {mask_fraction:.6f}\n")   
+# with open(area_path, "w") as f:
+#     f.write(f"Mask area (pixels): {mask_area}\n")
+#     f.write(f"Image area (pixels): {image_area}\n")
+#     f.write(f"Mask fraction: {mask_fraction:.6f}\n")   
     
-# Add mask metadata
-df_quantification["gfp_mask_area_pixels"] = mask_area
-df_quantification["image_area_pixels"] = image_area
-df_quantification["gfp_mask_fraction"] = mask_fraction
-df_quantification["embryo_area_pixels"] = embryo_area_pixels
+# # Add mask metadata
+# df_quantification["gfp_mask_area_pixels"] = mask_area
+# df_quantification["image_area_pixels"] = image_area
+# df_quantification["gfp_mask_fraction"] = mask_fraction
+# df_quantification["embryo_area_pixels"] = embryo_area_pixels
         
-df_quantification   
+# df_quantification   
     
-gfp_mask_path = os.path.join(
-    output_directory,
-    f"{image_name}_mRNA_gfp_colocalization.csv"
-)
+# gfp_mask_path = os.path.join(
+#     output_directory,
+#     f"{image_name}_mRNA_gfp_colocalization.csv"
+# )
 
-df_quantification.to_csv(gfp_mask_path, index=False)
+# df_quantification.to_csv(gfp_mask_path, index=False)
 
-# Display the updated DataFrame
-df_quantification
+# # Display the updated DataFrame
+# df_quantification
 
 
+# %% [markdown]
 # #### Microtubules colocalization
 
-# In[67]:
-
-
+# %% jupyter={"source_hidden": true}
 # #Calculate colocalization with gfp
 
 # mask_2d = np.max(mask_3d == 1, axis=0)  # 2D max projection
@@ -2468,21 +2643,19 @@ if calculate_tif_mask_colocalization:
             image_name=image_name,
             plot=plot
         )
-# Display the updated DataFrame
-df_quantification
+    # Display the updated DataFrame
+    df_quantification
 
 
-mask_2d_path = os.path.join(
-    output_directory,
-    f"{image_name}_mRNA_microtubules_colocalization.csv"
-)
+    mask_2d_path = os.path.join(
+        output_directory,
+        f"{image_name}_mRNA_microtubules_colocalization.csv"
+    )
 
-df_quantification.to_csv(gfp_mask_path, index=False)
-
-
-# In[68]:
+    df_quantification.to_csv(gfp_mask_path, index=False)
 
 
+# %% jupyter={"source_hidden": true}
 import os
 import numpy as np
 from skimage.morphology import dilation, disk
@@ -2607,9 +2780,7 @@ def calculate_mask_colocalization(coord, rna_max, mask, output_directory,
 # df_quantification
 
 
-# In[69]:
-
-
+# %% jupyter={"source_hidden": true}
 # # Ensure mask is binary and max-projected
 # mask_2d = np.max(mask_3d == 1, axis=0)  # 2D max projection
 
@@ -2752,9 +2923,7 @@ def calculate_mask_colocalization(coord, rna_max, mask, output_directory,
 #     )
 
 
-# In[70]:
-
-
+# %% jupyter={"source_hidden": true}
 run_mask_colocalization = False  # flag
 
 if run_mask_colocalization:
@@ -2869,9 +3038,8 @@ if run_mask_colocalization:
         return spots_in_mask, spots_out_mask
 
 
-# In[71]:
 
-
+# %% jupyter={"source_hidden": true}
 if run_mask_colocalization:
     for rna_name, rna_image, coord in zip(rna_names, rna_images, rna_coords):
         spots_in_mask, spots_out_mask = calculate_mask_colocalization(
@@ -2886,17 +3054,12 @@ if run_mask_colocalization:
         )
 
 
-# In[ ]:
+# %% jupyter={"source_hidden": true}
 
-
-
-
-
+# %% [markdown]
 # #### 6.1 Nuclear colocalization analysis
 
-# In[72]:
-
-
+# %% jupyter={"source_hidden": true}
 # #Calculate nuclear colocalization
 
 # masks_nuclei.shape # mask nuclei is a 2D array that contains the 3D data
@@ -3019,14 +3182,13 @@ if calculate_nuclei_colocalization:
 # Display the updated DataFrame
 # df_quantification
 
-
+# %% [markdown]
 # #### 6.2 Membrane colocalization analysis
 
+# %% [markdown]
 # #### 6.3 Generate donut masks
 
-# In[73]:
-
-
+# %%
 # #Generate donut masks to calculate membrane colocalization
 if generate_donut_mask:
     def generate_donut_mask(original_mask, n, plot=False, output_path=None):
@@ -3069,9 +3231,7 @@ if generate_donut_mask:
     nuclei_donut_mask = generate_donut_mask(masks_nuclei, n=10, plot=True, output_path=os.path.join(output_directory, f'{image_name}_nuclei_donut.png'))
 
 
-# In[74]:
-
-
+# %% jupyter={"source_hidden": true}
 # #Generate donut masks to calculate membrane colocalization
 if generate_donut_mask:
     # ---- Donut mask generation ----
@@ -3164,11 +3324,10 @@ if generate_donut_mask:
     print(cytosol_donut_features)
 
 
+# %% [markdown]
 # #### 6.4 mRNA-membrane colocalization
 
-# In[75]:
-
-
+# %% jupyter={"source_hidden": true}
 #Code to visualize colocalization with membranes
 
 if calculate_membrane_colocalization:
@@ -3290,11 +3449,10 @@ if calculate_membrane_colocalization:
     df_quantification
 
 
+# %% [markdown]
 # #### 6.5 Distance from membrane analysis
 
-# In[76]:
-
-
+# %% jupyter={"source_hidden": true}
 # #Erode masks and calculate layers from the membrane
 def generate_inner_concentric_layers(original_mask, n_layers=5, spacing=2, plot=False, output_path=None):
     layered_mask = np.zeros_like(original_mask, dtype=np.uint8)
@@ -3374,9 +3532,7 @@ if run_concentric_layers_analysis:
     )
 
 
-# In[77]:
-
-
+# %% jupyter={"source_hidden": true}
 # # PLot mRNA abundance on concentr
 
 def plot_rna_on_individual_layers(rna_names, rna_images, rna_coords, layered_mask, image_name, output_directory=None, plot=True, grid_width=80, grid_height=80):
@@ -3466,9 +3622,7 @@ if run_concentric_layers_analysis:
     )
 
 
-# In[78]:
-
-
+# %% jupyter={"source_hidden": true}
 ## Plot the total abundance per normalized layer
 def plot_rna_abundance_by_layer(rna_names, rna_coords, layered_mask, image_name, output_directory, plot=True):
     n_layers = len(np.unique(layered_mask)) - 1
@@ -3578,9 +3732,8 @@ if run_concentric_layers_analysis:
     )
 
 
-# In[79]:
 
-
+# %% jupyter={"source_hidden": true}
 
 # # relative_density = (RNA count in layer) / (number of pixels in that layer) * 100
 # def plot_relative_rna_abundance_by_layer(rna_names, rna_coords, layered_mask, image_name, output_directory, plot=True):
@@ -3654,11 +3807,11 @@ if run_concentric_layers_analysis:
 #     )
 
 
+
+# %% [markdown]
 # #### 6.6 mRNA-p granule colocalization analysis
 
-# In[80]:
-
-
+# %% jupyter={"source_hidden": true}
 #p-granule mask for co-localization
 
 image_pgranules = image_ch2
@@ -3704,10 +3857,7 @@ if generate_pgranule_mask:
     plt.savefig(output_path, bbox_inches='tight', pad_inches=0.1)
     
 
-
-# In[39]:
-
-
+# %% jupyter={"source_hidden": true}
 # #generate p granule masks
 from skimage.filters import gaussian, median, threshold_local
 
@@ -3778,9 +3928,7 @@ if generate_pgranule_mask:
     plt.savefig(output_path, bbox_inches='tight', pad_inches=0.1)
 
 
-# In[40]:
-
-
+# %% jupyter={"source_hidden": true}
 # # Using cellpose models to mask pgrnaules. challenching because the spots are small and close. cyto2 doesnt perfomr very well. 
 run_pgranule_segmentation = False
 
@@ -3822,9 +3970,7 @@ if run_pgranule_segmentation:
     #plt.savefig(os.path.join(output_directory, "pgranule_segmentation.png"), dpi=300, bbox_inches='tight')
 
 
-# In[41]:
-
-
+# %% jupyter={"source_hidden": true}
 #p-granule mask for co-localization
 
 if calculate_pgranule_colocalization:
@@ -3907,12 +4053,10 @@ if calculate_pgranule_colocalization:
     # Display the updated DataFrame
     display(df_quantification)
 
-
+# %% [markdown]
 # #### 6.7 mRNA-mRNA colocalization (FLARIM - translating mRNAs)
 
-# In[42]:
-
-
+# %% jupyter={"source_hidden": true}
 # #Calculate mRNA-mRNA colocalization
 
 if calculate_mRNA_mRNA_colocalization:
@@ -3966,11 +4110,10 @@ if calculate_mRNA_mRNA_colocalization:
     )
 
 
+# %% [markdown]
 # #### 6.8 Log calculation of mRNA vs protein
 
-# In[43]:
-
-
+# %% jupyter={"source_hidden": true}
 # # Heatmap of protein levels with intensity calculations restricted to the mask
 # import matplotlib.pyplot as plt
 # fitc_projection = image_FITC
@@ -4049,9 +4192,7 @@ if calculate_mRNA_mRNA_colocalization:
 #     protein_expression(fitc_projection, masks_cytosol, os.path.join(output_directory, 'FITC_protein_expression_heatmap.png'), threshold=0.6)
 
 
-# In[44]:
-
-
+# %% jupyter={"source_hidden": true}
 # def apply_threshold(image, threshold):
 #     """
 #     Apply thresholding to the input image, setting values below threshold to 0.
@@ -4106,11 +4247,10 @@ if calculate_mRNA_mRNA_colocalization:
 # log_contrast_map = log_contrast_with_white_background(mCherry_heatmap, fitc_resized, masks_cytosol, threshold=0.3, grid_width=40, grid_height=40)
 
 
+# %% [markdown]
 # ## 7. Export data report
 
-# In[45]:
-
-
+# %% jupyter={"source_hidden": true}
 # import datetime
 
 # # Read the template
@@ -4169,9 +4309,7 @@ if calculate_mRNA_mRNA_colocalization:
 # print(f"✅ HTML report generated: {output_file}")
 
 
-# In[ ]:
-
-
+# %% jupyter={"source_hidden": true}
 #pdf report
 from reportlab.pdfgen import canvas
 from reportlab.platypus import Table, TableStyle, SimpleDocTemplate
@@ -4327,10 +4465,3 @@ for outputFile in os.listdir(output_directory):
 
 c.save()
 print(f"PDF report saved!")
-
-
-# In[ ]:
-
-
-
-
