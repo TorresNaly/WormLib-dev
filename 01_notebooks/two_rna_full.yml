@@ -1,0 +1,39 @@
+input:
+  path: ../../data/08_dv
+  output_directory: ../../output_temp/two_rna_full
+
+microscope:
+  voxel_size_nm: [1448, 450, 450]
+
+channels:
+  nuclei:
+    name: DAPI
+    index: 3
+  brightfield:
+    name: brightfield
+    source: ref_file
+    index: null
+  rna:
+    - name: mRNA1
+      fluorophore: Cy5
+      index: 0
+      spot_radius_nm: [1409, 340, 340]
+      detection_color: red
+    - name: mRNA2
+      fluorophore: mCherry
+      index: 1
+      spot_radius_nm: [1283, 310, 310]
+      detection_color: blue
+
+segmentation:
+  embryo_diameter: 500
+  nuclei_diameter: 70
+
+pipeline:
+  cell_segmentation: true
+  cell_classification: true
+  embryo_segmentation: false
+  spot_detection: true
+  heatmaps: true
+  rna_density: true
+  line_scan: true

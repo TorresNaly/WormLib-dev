@@ -1,0 +1,33 @@
+input:
+  path: ../../data/08_dv/230521_N2_08_R3D.dv
+  output_directory: ../../output_temp/dapi_one_rna_no_brightfield
+
+microscope:
+  voxel_size_nm: [1448, 450, 450]
+
+channels:
+  nuclei:
+    name: DAPI
+    index: 3
+  brightfield:
+    name: null
+    index: null
+  rna:
+    - name: mRNA1
+      fluorophore: Cy5
+      index: 0
+      spot_radius_nm: [1409, 340, 340]
+      detection_color: red
+
+segmentation:
+  embryo_diameter: 500
+  nuclei_diameter: 70
+
+pipeline:
+  cell_segmentation: true
+  cell_classification: false
+  embryo_segmentation: false
+  spot_detection: true
+  heatmaps: false
+  rna_density: false
+  line_scan: false
